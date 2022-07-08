@@ -1,9 +1,6 @@
 package com.engagementMusic.engagementMusic.Controllers;
 
-import com.engagementMusic.engagementMusic.DTO.AgentDTO;
-import com.engagementMusic.engagementMusic.DTO.BookingDTO;
-import com.engagementMusic.engagementMusic.DTO.DancingBarDTO;
-import com.engagementMusic.engagementMusic.DTO.MemberDTO;
+import com.engagementMusic.engagementMusic.DTO.*;
 import com.engagementMusic.engagementMusic.Embeddables.FullName;
 import com.engagementMusic.engagementMusic.Models.*;
 import com.engagementMusic.engagementMusic.Services.AgentService;
@@ -29,6 +26,13 @@ public class AgentController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public List<Agent> getBand() { return agentService.findAll();}
 
+    @GetMapping("/agent/find-username")
+    @CrossOrigin()
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Agent getAgentByUsername(@AuthenticationPrincipal UserDetails userDetails) {
+        return agentService.findByUsername(userDetails);
+    }
+
     @PostMapping("/add-agent")
     @CrossOrigin()
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -42,13 +46,10 @@ public class AgentController {
     @PutMapping("/agent/update")
     @CrossOrigin()
     @ResponseStatus(HttpStatus.OK)
-    public Agent modifyAttributes(@AuthenticationPrincipal UserDetails userDetails,
-                                 @RequestParam Optional<String> password, @RequestParam Optional <FullName> fullName,
-                                 @RequestParam Optional<String> email, @RequestParam Optional<String> picture,
-                                 @RequestParam Optional<String> dni, @RequestParam Optional<Long> phone,
-                                 @RequestParam Optional<String> position) {
-        return agentService.modifyAttributes(userDetails, password, fullName,email, picture, dni, phone, position);
+    public Agent modifyAttributes(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid AgentDTO agent) {
+        return agentService.modifyAttributes(userDetails, agent);
     }
+
     @PostMapping("/agent/add-bar")
     @CrossOrigin()
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -60,7 +61,7 @@ public class AgentController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public List<DancingBar> allBars() { return agentService.findAllDancingBar();}
 
-    @GetMapping("/agent/all-bars-list")
+    @GetMapping("/agent/bar-list")
     @CrossOrigin()
     @ResponseStatus(HttpStatus.ACCEPTED)
     public List<DancingBar> allDancingBarsOfAgent(@AuthenticationPrincipal UserDetails userDetails) {
@@ -84,5 +85,10 @@ public class AgentController {
     public Booking addBooking(@AuthenticationPrincipal UserDetails userDetails, @RequestParam String name,
                               @RequestBody @Valid BookingDTO bookingDTO){
         return agentService.bookingAgent(userDetails, name, bookingDTO);}
+
+    @DeleteMapping("/agent/delete-bar/{id}")
+    @CrossOrigin()
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void deleteBar(@AuthenticationPrincipal UserDetails userDetails, @PathVariable long id) { agentService.deleteBar(userDetails, id);}
 
 }

@@ -11,10 +11,10 @@ import java.util.List;
 public class Agent extends User{
 
     private String position;
-    @OneToMany(mappedBy = "agent")
-    @JsonIgnore
+    @OneToMany(mappedBy = "agent", cascade = CascadeType.ALL)
+
     private List<Booking> bookingListAgent;
-    @OneToMany(mappedBy = "agentDancing")
+    @OneToMany(mappedBy = "agentDancing", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<DancingBar> dancingBarListAgent;
 
     public Agent(FullName fullName, String email, String username, String password, String dni, long phone, String position) {

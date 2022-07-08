@@ -70,8 +70,8 @@ public class EngagementMusicApplication implements CommandLineRunner {
 		DancingBar dancingBar4 = dancingBarRepository.save(new DancingBar(agent1, "Space", "https://www.fiestasnocheviejamadrid.com/imagenes/81_foto4.jpg", new Address("Av. Diagonal 201", "Madrid", "Spain", "08078")));
 		DancingBar dancingBar5 = dancingBarRepository.save(new DancingBar(agent1, "Row", "https://www.allfest.es/wp-content/uploads/2021/11/6E42025A-6249-4D73-96C9-F0E0E5A1FCDB.jpeg", new Address("Carretera n/25 km5", "Sevilla", "Spain", "08015")));
 		DancingBar dancingBar6 = dancingBarRepository.save(new DancingBar(agent1, "Pachanga Beach", "https://www.elprogreso.es/asset/thumbnail,1280,720,center,center//media/elprogreso/images/2022/06/12/2022061212592017972.jpg", new Address("C/ de la Cendra", "Tarragona", "Spain", "08007")));
-		//Booking booking1 = bookingRepository.save(new Booking(band1, agent1, new LocalDate (2022, 5, 25), new BigDecimal(400)));
-
+		Booking booking1 = bookingRepository.save(new Booking(band1, agent1, LocalDate.of(2022, 5, 25), new BigDecimal(400)));
+		Booking booking2 = bookingRepository.save(new Booking(band1, agent1, LocalDate.of(2022, 11, 21), new BigDecimal(1400)));
 
 
 

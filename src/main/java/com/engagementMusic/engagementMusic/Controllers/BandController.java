@@ -77,5 +77,10 @@ public class BandController {
     public List<Booking> bookingList(@AuthenticationPrincipal UserDetails userDetails) {
         return bandService.listBookingBand(userDetails);
     }
+    @DeleteMapping("/band/member-delete/{id}")
+    @CrossOrigin()
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void deleteMember(@AuthenticationPrincipal UserDetails userDetails, @PathVariable long id) { bandService.deleteMember(userDetails, id);}
+
 
 }

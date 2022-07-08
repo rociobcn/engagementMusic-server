@@ -1,6 +1,7 @@
 package com.engagementMusic.engagementMusic.Models;
 
 import com.engagementMusic.engagementMusic.Embeddables.Address;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -11,6 +12,7 @@ public class DancingBar {
     private long id;
     @ManyToOne
     @JoinColumn(name = "agentId")
+    @JsonIgnore
     private Agent agentDancing;
     private String name;
     private String picture;

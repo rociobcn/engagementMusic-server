@@ -13,13 +13,13 @@ public class Band extends User{
 
 
     private String nameOfGroup;
-    @OneToMany(mappedBy = "band")
+    @OneToMany(mappedBy = "band", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Member> membersList;
     @Enumerated(EnumType.STRING)
     private Genre genre;
     private BigDecimal priceHour;
-    @OneToMany(mappedBy = "band")
+    @OneToMany(mappedBy = "band", cascade = CascadeType.ALL)
     private List <Booking> BookingList;
 
     public Band(FullName fullName, String email, String username, String password, String dni, long phone, String nameOfGroup, Genre genre, BigDecimal priceHour) {

@@ -92,7 +92,26 @@ public class BandService {
         } else{
             throw new ResponseStatusException(HttpStatus.CONFLICT, "The username doesn't exist");
         }
+    }
+    public void deleteMember(UserDetails userDetails, long id){
+        if(bandRepository.findByUsername(userDetails.getUsername()).isPresent()) {
+            Band band = bandRepository.findByUsername(userDetails.getUsername()).get();
+            System.err.println(id);
+            for (Member x : band.getMembersList()) {
+                System.err.println(x.getId());
+                if (x.getId() == id){
+                    //Member member = new Member(x.getFullName(), x.isSingle(), x.getInstrument(),band);
+                    //memberRepository.delete(member);
+                    memberRepository.deleteById(x.getId());
+                    break;
+                } else{
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Member not found");
+                }
+            }
 
+        } else{
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Band not found");
+        }
     }
     public List<Booking> listBookingBand(UserDetails userDetails) {
         if (bandRepository.findByUsername(userDetails.getUsername()).isPresent()) {
@@ -102,6 +121,7 @@ public class BandService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Agent not found");
         }
     }
+
 
 
 }

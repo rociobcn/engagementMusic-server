@@ -41,6 +41,9 @@ public class AgentService {
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public List<Agent> findAll(){ return agentRepository.findAll();}
+    public Agent findByUsername(UserDetails userDetails){
+        return agentRepository.findByUsername(userDetails.getUsername()).get();
+    }
 
     public Agent addAgent(AgentDTO agentDTO){
         if (!agentRepository.findByUsername(agentDTO.getUsername()).isPresent()) {
@@ -62,19 +65,15 @@ public class AgentService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Agent not found");
         }
     }
-    public Agent modifyAttributes(UserDetails userDetails, Optional<String> password, Optional <FullName> fullName, Optional<String> email,
-                                 Optional<String> picture, Optional<String> dni, Optional<Long> phone, Optional<String> position){
+    public Agent modifyAttributes(UserDetails userDetails, AgentDTO agentDTO){
 
         if(agentRepository.findByUsername(userDetails.getUsername()).isPresent()) {
-            Agent agent = agentRepository.findByUsername(userDetails.getUsername()).get();
-            if(password.isPresent() && !password.isEmpty()){ agent.setPassword(password.get());}
-            if(fullName.isPresent() && !fullName.isEmpty()){ agent.setFullName(fullName.get());}
-            if(email.isPresent() && !email.isEmpty()){ agent.setEmail(email.get());}
-            if(picture.isPresent() && !picture.isEmpty()){ agent.setPicture(picture.get());}
-            if(dni.isPresent() && !dni.isEmpty()){ agent.setDni(dni.get());}
-            if(phone.isPresent() && !phone.isEmpty()){ agent.setPhone(phone.get());}
-            if(position.isPresent() && !position.isEmpty()){ agent.setPosition(position.get());}
-            return agentRepository.save(agent);
+            Agent agent1 = new Agent(agentDTO.getFullName(), agentDTO.getEmail(), agentDTO.getUsername(), passwordEncoder.encode (agentDTO.getPassword()),
+                    agentDTO.getPicture(), agentDTO.getDni(), agentDTO.getPhone(), agentDTO.getPosition());
+            agent1.setPicture(agentDTO.getPicture());
+            if (agentDTO.getPicture() == null || agentDTO.getPicture().isEmpty()) agent1.setPicture("https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/User_font_awesome.svg/2048px-User_font_awesome.svg.png");
+            agent1.setRole("AGENT");
+            return agentRepository.save(agent1);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Agent doesn't exist");
         }
@@ -101,6 +100,25 @@ public class AgentService {
         }
 
     }
+    public void deleteBar(UserDetails userDetails, long id){
+        if(agentRepository.findByUsername(userDetails.getUsername()).isPresent()) {
+            Agent agent = agentRepository.findByUsername(userDetails.getUsername()).get();
+            System.err.println(id);
+            for (DancingBar x : agent.getDancingBarListAgent()) {
+                System.err.println(x.getId());
+                System.err.println(id);
+                if (x.getId() == id){
+                    dancingBarRepository.delete(x);
+                    break;
+                } else{
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Dancing Bar not found");
+                }
+            }
+
+        } else{
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Agent not found");
+        }
+    }
     public Band findByNameOfGroup(UserDetails userDetails, String name){
         if (agentRepository.findByUsername(userDetails.getUsername()).isPresent()) {
             if (bandRepository.findByNameOfGroup(name).isPresent()){
@@ -125,12 +143,11 @@ public class AgentService {
                     return bookingRepository.save(booking);
                 } else{
                     for (Booking x: band.getBookingList()) {
-                        if (x.getDate() == booking.getDate()){
+                        if (x.getDate().isEqual(booking.getDate())){
                             throw new ResponseStatusException(HttpStatus.CONFLICT, "Not available");
-                        } else{
-                            return bookingRepository.save(booking);
                         }
                     }
+                    return bookingRepository.save(booking);
                 }
 
             } else{
@@ -139,7 +156,7 @@ public class AgentService {
         } else{
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Agent not found");
         }
-        return null;
+
     }
     public List<Booking> listBookingAgent(UserDetails userDetails){
         if(agentRepository.findByUsername(userDetails.getUsername()).isPresent()) {
